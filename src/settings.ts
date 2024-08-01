@@ -1,5 +1,5 @@
 import { PluginSettingTab, Setting } from 'obsidian';
-import CardViewPlugin from '../main';
+import CardViewPlugin from './main';
 
 export interface CardViewPluginSettings {
   borderRadius: string;

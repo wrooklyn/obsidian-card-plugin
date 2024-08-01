@@ -1,10 +1,10 @@
 import { App, Plugin, MarkdownPostProcessorContext, MarkdownRenderChild } from 'obsidian';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { parseCardBlock } from './src/utils/CardParser';
-import { CardContainer } from './src/components/CardContainer';
-import { CardViewPluginSettings, DEFAULT_SETTINGS } from './src/settings';
-import { parseDataviewQuery } from './src/utils/DataViewQueryParser';
+import { parseCardBlock } from './utils/CardParser';
+import { CardContainer } from './components/CardContainer';
+import { CardViewPluginSettings, DEFAULT_SETTINGS } from './settings';
+import { parseDataviewQuery } from './utils/DataViewQueryParser';
 
 export default class CardViewPlugin extends Plugin {
   settings: CardViewPluginSettings;
