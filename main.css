@@ -1,0 +1,25 @@
+/* styles/cardStyles.css */
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  margin: 8px;
+  transition: transform 0.2s ease;
+  color: black;
+}
+.card img {
+  width: 100%;
+  height: auto;
+}
+.card-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 16px;
+}
+.card-container::-webkit-scrollbar {
+  height: 8px;
+}
+.card-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}

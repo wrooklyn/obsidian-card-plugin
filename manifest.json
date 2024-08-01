@@ -1,11 +1,13 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "cardview-plugin",
+	"name": "Cardview Plugin",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "A plugin to create customizable card views in Obsidian.",
+	"author": "Xiaozhen Zhu",
+	"authorUrl": "",
+	"js": "main.js",
+	"css": "styles/cardStyles.css",
 	"isDesktopOnly": false
-}
+  }
+  
