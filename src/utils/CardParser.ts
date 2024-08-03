@@ -15,6 +15,7 @@ export function parseCardBlock(content: string): CardProps[] {
       }
       return card as CardProps;
     });
+    
   } catch (error) {
     console.error('Error parsing card block:', error);
     throw error; 

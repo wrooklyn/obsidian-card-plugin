@@ -6,8 +6,7 @@
 	"description": "A plugin to create customizable card views in Obsidian.",
 	"author": "Xiaozhen Zhu",
 	"authorUrl": "",
-	"js": "src/main.js",
-	"css": "styles/cardStyles.css",
+	"js": "main.js",       
+	"css": "styles/cardStyles.css", 
 	"isDesktopOnly": true
-  }
-  
+}

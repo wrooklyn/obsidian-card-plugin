@@ -5,12 +5,14 @@ export interface CardViewPluginSettings {
   borderRadius: string;
   backgroundColor: string;
   maxWidth: string;
+  maxHeight: string;
 }
 
 export const DEFAULT_SETTINGS: CardViewPluginSettings = {
   borderRadius: '8px',
   backgroundColor: '#fff',
-  maxWidth: '300px',
+  maxWidth: '250px',
+  maxHeight: '200px'
 };
 
 export class CardViewSettingTab extends PluginSettingTab {
@@ -48,6 +50,13 @@ export class CardViewSettingTab extends PluginSettingTab {
           this.plugin.settings.maxWidth = value;
           await this.plugin.saveSettings();
     }));
-    
+    new Setting(containerEl)
+    .setName('Max Height')
+    .addText(text => text
+      .setValue(this.plugin.settings.maxHeight)
+      .onChange(async (value) => {
+        this.plugin.settings.maxHeight = value;
+        await this.plugin.saveSettings();
+  }));
   }
 }
