@@ -6,6 +6,9 @@ import { CustomTextContent } from './CustomTextContent';
 import { CustomIconButton } from './CustomIconButton';
 import { styled } from '@mui/system';
 
+//TODO
+//manage the merging of the settings and styling 
+
 // Styled component to handle dynamic card styling
 const StyledCard = styled(JoyCard)<{ resizable?: boolean }>(({ resizable, theme }) => ({
   display: 'flex',
@@ -22,6 +25,8 @@ const StyledCard = styled(JoyCard)<{ resizable?: boolean }>(({ resizable, theme 
     transform: 'translateY(-2px)',
   },
 }));
+
+//TODO
 
 export const CustomCard: FC<CardProps> = ({ style, image, content, actionIcon, metadata }) => {
   const borderRadius = style?.cornerRadius

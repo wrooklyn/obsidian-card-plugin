@@ -76,8 +76,8 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
 export class CardViewSettingTab extends PluginSettingTab {
   plugin: CardViewPlugin;
 
-  constructor(app: App, plugin: CardViewPlugin) {
-    super(app, plugin);
+  constructor(plugin: CardViewPlugin) {
+    super(plugin.app, plugin);
     this.plugin = plugin;
   }
 
@@ -148,6 +148,19 @@ export class CardViewSettingTab extends PluginSettingTab {
             })
         );
     });
+
+    // Enable Resizing
+    new Setting(containerEl)
+    .setName('Enable Resizing')
+    .setDesc('Allow cards to be resizable.')
+    .addToggle((toggle) =>
+      toggle
+        .setValue(this.plugin.settings.cardStyle.resizable || false)
+        .onChange(async (value) => {
+          this.plugin.settings.cardStyle.resizable = value;
+          await this.plugin.saveSettings();
+        })
+    );
 
     containerEl.createEl('h3', { text: 'Typography Settings' });
 
@@ -224,18 +237,7 @@ export class CardViewSettingTab extends PluginSettingTab {
         );
     });
 
-    // Enable Resizing
-    new Setting(containerEl)
-      .setName('Enable Resizing')
-      .setDesc('Allow cards to be resizable.')
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.cardStyle.resizable || false)
-          .onChange(async (value) => {
-            this.plugin.settings.cardStyle.resizable = value;
-            await this.plugin.saveSettings();
-          })
-      );
+    containerEl.createEl('h3', { text: 'General Settings' });
 
     // Horizontal Scroll Toggle
     new Setting(containerEl)

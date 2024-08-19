@@ -3,7 +3,7 @@ import { PaddingStyle, CornerRadius } from "./CommonStyleInterfaces";
 
 export interface Image {
   src: string;
-  style: ImageStyle;
+  style?: ImageStyle;
 }
 
 export interface ImageStyle {

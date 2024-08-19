@@ -11,6 +11,7 @@ export interface Card {
 }
 
 export interface CardTextContent {
+  link: boolean;
   heading?: TextSection;
   title?: TextSection;
   subtitle?: TextSection;
