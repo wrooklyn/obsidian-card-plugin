@@ -1,12 +1,12 @@
 {
 	"id": "cardview-plugin",
-	"name": "Cardview Plugin",
+	"name": "Obsidian CardView Plugin",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "A plugin to create customizable card views in Obsidian.",
 	"author": "Xiaozhen Zhu",
 	"authorUrl": "",
 	"js": "main.js",       
-	"css": "styles/cardStyles.css", 
+	"css": "styles.css", 
 	"isDesktopOnly": true
 }
