@@ -26,4 +26,13 @@ export default class CardViewPlugin extends Plugin {
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
+
+  async resetSettings () {
+    this.settings = Object.assign({}, DEFAULT_SETTINGS); 
+    await this.saveSettings(); 
+  }
+
+  onunload() {
+    this.resetSettings();
+  }
 }

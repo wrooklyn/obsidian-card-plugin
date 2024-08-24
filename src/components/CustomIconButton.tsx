@@ -5,10 +5,10 @@ import { FC } from "react";
 import { getIconByCategory, iconPositionMap } from "utils/utils";
 
 const StyledIconButton = styled(IconButton, {
-    shouldForwardProp: (prop) => prop !== 'position' && prop !== 'padding',
-  })<Partial<ActionIcon>>(({ position = 'top-right', padding }) => ({
+    shouldForwardProp: (prop) => prop !== 'position' && prop !== 'margin',
+  })<Partial<ActionIcon>>(({ position = 'top-right', margin }) => ({
     position: 'absolute',
-    ...iconPositionMap[position]?.(padding),
+    ...iconPositionMap[position]?.(margin),
   }));
 
 export const CustomIconButton: FC<ActionIcon> = ({
@@ -18,7 +18,7 @@ export const CustomIconButton: FC<ActionIcon> = ({
     disabled = false,
     onClick,
     position,
-    padding,
+    margin,
     ariaLabel = "Action Icon",
 }) => {
 
@@ -31,7 +31,7 @@ export const CustomIconButton: FC<ActionIcon> = ({
             disabled={disabled}
             onClick={onClick}
             position={position} 
-            padding={padding} 
+            margin={margin} 
             aria-label={ariaLabel}
         >
             {icon}

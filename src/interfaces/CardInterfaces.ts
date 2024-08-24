@@ -1,5 +1,5 @@
 import { Image } from "./ImageInterfaces";
-import { CornerRadius, PaddingStyle, TextStyle } from "./CommonStyleInterfaces";
+import { CornerRadius, marginStyle, TextStyle } from "./CommonStyleInterfaces";
 import { ContentPosition, IconCategory, IconPosition, IconVariant } from "utils/types";
 
 export interface Card {
@@ -23,14 +23,14 @@ export interface CardTextContent {
 
 export interface TextSection {
   text: string;
-  typography?: TextStyle;
+  style?: TextStyle;
 }
 
 export interface LinkItem {
   icon?: string;
   text: string;
   link: string;
-  typography?: TextStyle;
+  style?: TextStyle;
 }
 
 export interface ActionIcon {
@@ -38,7 +38,7 @@ export interface ActionIcon {
   variant?: IconVariant;
   size?: 'sm' | 'md' | 'lg';
   position?: IconPosition;
-  padding?: PaddingStyle; 
+  margin?: marginStyle; 
   disabled?: boolean;
   onClick?: () => void;
   ariaLabel?: string;

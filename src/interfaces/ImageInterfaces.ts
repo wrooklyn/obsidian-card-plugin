@@ -1,5 +1,5 @@
 import { ImageFit, ImagePosition } from "utils/types";
-import { PaddingStyle, CornerRadius } from "./CommonStyleInterfaces";
+import { marginStyle, CornerRadius } from "./CommonStyleInterfaces";
 
 export interface Image {
   src: string;
@@ -9,7 +9,7 @@ export interface Image {
 export interface ImageStyle {
   position?: ImagePosition;
   fit?: ImageFit;
-  padding?: PaddingStyle;
+  margin?: marginStyle;
   cornerRadius?: CornerRadius;
   gradientOverlay?: boolean;
 }

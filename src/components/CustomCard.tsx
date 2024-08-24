@@ -1,42 +1,43 @@
 import { FC } from 'react';
 import { Card as JoyCard } from '@mui/joy';
-import { Card as CardProps } from 'interfaces/CardInterfaces';
+import { Card as CardProps, CardStyle } from 'interfaces/CardInterfaces';
 import { CustomImage } from './CustomImage';
 import { CustomTextContent } from './CustomTextContent';
 import { CustomIconButton } from './CustomIconButton';
 import { styled } from '@mui/system';
+import { ImageStyle } from 'interfaces/ImageInterfaces';
 
-//TODO
-//manage the merging of the settings and styling 
 
 // Styled component to handle dynamic card styling
-const StyledCard = styled(JoyCard)<{ resizable?: boolean }>(({ resizable, theme }) => ({
+const StyledCard = styled(JoyCard)<{ cardStyle?: CardStyle, imageStyle?: ImageStyle}>(({ cardStyle, imageStyle }) => ({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
-  resize: resizable ? 'both' : 'none',
+  resize: cardStyle?.resizable ? 'both' : 'none', 
   overflow: 'hidden',
-  width: resizable ? 'auto' : '300px', // Fallback width if not resizable
-  height: resizable ? 'auto' : '400px', // Fallback height if not resizable
-  backgroundColor: theme.palette.background.paper,
+  width: cardStyle?.resizable ? 'auto' : cardStyle?.width, 
+  height: cardStyle?.resizable ? 'auto' : cardStyle?.height, 
+  minWidth: cardStyle?.width, 
+  minHeight: cardStyle?.height, 
+  backgroundColor: cardStyle?.backgroundColor,
+  borderTopLeftRadius: cardStyle?.cornerRadius?.topLeft,
+  borderTopRightRadius: cardStyle?.cornerRadius?.topRight,
+  borderBottomLeftRadius: cardStyle?.cornerRadius?.bottomLeft,
+  borderBottomRightRadius: cardStyle?.cornerRadius?.bottomRight,
+  paddingTop: imageStyle?.margin?.marginTop, 
+  paddingLeft: imageStyle?.margin?.marginLeft, 
+  paddingRight: imageStyle?.margin?.marginRight, 
   transition: 'transform 0.3s, border 0.3s',
   '&:hover': {
-    borderColor: theme.palette.primary.outlinedHoverBorder,
     transform: 'translateY(-2px)',
   },
 }));
 
-//TODO
-
 export const CustomCard: FC<CardProps> = ({ style, image, content, actionIcon, metadata }) => {
-  const borderRadius = style?.cornerRadius
-    ? `${style.cornerRadius?.topLeft || '0'} ${style.cornerRadius?.topRight || '0'} ${style.cornerRadius?.bottomRight || '0'} ${style.cornerRadius?.bottomLeft || '0'}`
-    : undefined;
-
   return (
-    <StyledCard resizable={style?.resizable} sx={{ borderRadius, backgroundColor: style?.backgroundColor }}>
+    <StyledCard cardStyle={style} imageStyle={image?.style}>
       {image && <CustomImage src={image.src} style={image.style} />}
-      {content && <CustomTextContent {...content} position={content.position} />}
+      {content && <CustomTextContent {...content}/>}
       {actionIcon && <CustomIconButton {...actionIcon} />}
     </StyledCard>
   );

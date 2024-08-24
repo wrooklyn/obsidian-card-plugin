@@ -1,4 +1,4 @@
-import { ContentStyle, PaddingStyle, TextStyle } from "interfaces/CommonStyleInterfaces";
+import { ContentStyle, marginStyle, TextStyle } from "interfaces/CommonStyleInterfaces";
 import { App, MarkdownPostProcessorContext, MarkdownRenderChild, MarkdownView, TFile } from 'obsidian';
 import { FontWeight, IconCategory, IconPosition, TextLevel } from "./types";
 import { Setting } from "obsidian";
@@ -155,6 +155,29 @@ export const configureTypographySection = (
       await plugin.saveSettings();
     }
   );
+
+  const marginSettings = pluginSettings.contentStyle[section]?.margin || {};
+  const marginKeys: (keyof marginStyle)[] = ['marginTop', 'marginRight', 'marginBottom', 'marginLeft'];
+
+  marginKeys.forEach((side) => {
+    createTextInputSetting(
+      containerEl,
+      `${sectionLabel} - ${capitalizeFirstLetter(side)}`,
+      `Set the ${side.replace('margin', '').toLowerCase()} margin for the ${sectionLabel.toLowerCase()} (e.g., 10px)`,
+      marginSettings[side] || '0px',
+      async (value: string) => {
+        if (!pluginSettings.contentStyle[section]) {
+          pluginSettings.contentStyle[section] = {} as TextStyle;
+        }
+        if (!pluginSettings.contentStyle[section]?.margin) {
+          pluginSettings.contentStyle[section]!.margin = {} as marginStyle;
+        }
+        pluginSettings.contentStyle[section]!.margin![side] = value;
+        await plugin.saveSettings();
+      }
+    );
+  });
+
 };
 
 /**
@@ -186,13 +209,13 @@ export const getIconByCategory = (category: IconCategory): JSX.Element | null =>
   return iconMap[category] || null;
 };
 
-export const iconPositionMap: Record<IconPosition, (padding?: PaddingStyle) => object> = {
-  'top-left': (padding) => ({ top: padding?.paddingTop ?? '0', left: padding?.paddingLeft ?? '0' }),
-  'top-right': (padding) => ({ top: padding?.paddingTop ?? '0', right: padding?.paddingRight ?? '0' }),
-  'bottom-left': (padding) => ({ bottom: padding?.paddingBottom ?? '0', left: padding?.paddingLeft ?? '0' }),
-  'bottom-right': (padding) => ({ bottom: padding?.paddingBottom ?? '0', right: padding?.paddingRight ?? '0' }),
-  'top-center': (padding) => ({ top: padding?.paddingTop ?? '0', left: '50%', transform: 'translateX(-50%)' }),
-  'bottom-center': (padding) => ({ bottom: padding?.paddingBottom ?? '0', left: '50%', transform: 'translateX(-50%)' }),
+export const iconPositionMap: Record<IconPosition, (margin?: marginStyle) => object> = {
+  'top-left': (margin) => ({ top: margin?.marginTop ?? '0', left: margin?.marginLeft ?? '0' }),
+  'top-right': (margin) => ({ top: margin?.marginTop ?? '0', right: margin?.marginRight ?? '0' }),
+  'bottom-left': (margin) => ({ bottom: margin?.marginBottom ?? '0', left: margin?.marginLeft ?? '0' }),
+  'bottom-right': (margin) => ({ bottom: margin?.marginBottom ?? '0', right: margin?.marginRight ?? '0' }),
+  'top-center': (margin) => ({ top: margin?.marginTop ?? '0', left: '50%', transform: 'translateX(-50%)' }),
+  'bottom-center': (margin) => ({ bottom: margin?.marginBottom ?? '0', left: '50%', transform: 'translateX(-50%)' }),
 };
 
 /**
@@ -215,7 +238,6 @@ const resolveImage = (image: Image, resolvePath: (src: string) => string, settin
 };
 
 
-
 const resolveCardContent = (app: App, content: CardTextContent, settingsTab: ContentStyle={}, templateSettings: ContentStyle={}): CardTextContent => {
   return {
     link: content.link,
@@ -230,75 +252,56 @@ const resolveCardContent = (app: App, content: CardTextContent, settingsTab: Con
 };
 
 
-const resolveTextSection = (section: TextSection, settingsTabTypography?: TextStyle, templateTypography?: TextStyle): TextSection => {
+const resolveTextSection = (section: TextSection, settingsTabStyle?: TextStyle, templateStyle?: TextStyle): TextSection => {
   const mergedTypography = mergeSettings(
     DEFAULT_SETTINGS.contentStyle.heading,
-    settingsTabTypography,         
-    templateTypography,       
-    section.typography        
+    settingsTabStyle,         
+    templateStyle,       
+    section.style        
   );
 
   return {
     text: section.text,
-    typography: mergedTypography,
+    style: mergedTypography,
   };
 };
 
-/**
- * Resolves a link item within a card, generating the correct Obsidian URI if applicable.
- * @param app - The current Obsidian app instance.
- * @param item - The LinkItem object containing the link and its associated text.
- * @returns The resolved LinkItem object with the correct URI.
- */
 const resolveLinkItem = (app: App, linkItem: LinkItem, settingsTabLinks: TextStyle | undefined, templateLinks: TextStyle | undefined): LinkItem => {
   const mergedTypography = mergeSettings(
     DEFAULT_SETTINGS.contentStyle.links,
     settingsTabLinks,         
     templateLinks,       
-    linkItem.typography        
+    linkItem.style        
   );
   return {
     ...linkItem,
     link: generateObsidianURI(app, linkItem.link),
-    typography: mergedTypography
+    style: mergedTypography
   };
 };
 
-/**
- * Resolves the action icon settings for a card, including its category, position, and size.
- * @param actionIcon - The ActionIcon object containing the icon configuration.
- * @returns The resolved ActionIcon object.
- */
+
 const resolveActionIcon = (actionIcon: ActionIcon): ActionIcon => {
   return {
     category: actionIcon.category,
     variant: actionIcon.variant || 'plain',
     size: actionIcon.size || 'md',
     position: actionIcon.position || 'top-right',
-    padding: actionIcon.padding,
+    margin: actionIcon.margin,
     disabled: actionIcon.disabled ?? false,
     onClick: actionIcon.onClick,
     ariaLabel: actionIcon.ariaLabel || 'Action Icon',
   };
 };
 
-/**
- * Resolves the metadata for a card, such as tags or additional details.
- * @param metadata - The Metadata object containing the tags.
- * @returns The resolved Metadata object.
- */
+
 const resolveMetadata = (metadata: Metadata): Metadata => {
   return {
     tags: metadata.tags || [],
   };
 };
 
-/**
- * Processes a card block, resolving all settings and configurations for each card.
- * @param app - The current Obsidian app instance.
- * @param codeBlock - The parsed CardViewConfig object containing the card definitions.
- * @returns An array of resolved Card objects.
- */
+
 const processCardBlock = (app: App, codeBlock: CardViewConfig, templateSettings: CardTemplate, settingsTab: GlobalSettings): Card[] => {
   const resolvePath = resolveVaultPath(app);
 
@@ -350,7 +353,10 @@ export async function processCodeBlock(
       createElement(
         'div',
         { style: { display: 'flex', flexWrap: 'wrap', gap: '16px' } },
-        cards.map((card, index) => createElement(CustomCard, { ...card, key: index}))
+        cards.map((card, index) => {
+          console.log("hello, ", card);
+          return createElement(CustomCard, { ...card, key: index})
+        })
       )
     );
 

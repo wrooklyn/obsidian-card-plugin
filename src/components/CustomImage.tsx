@@ -3,7 +3,7 @@ import { AspectRatio, CardCover, CardOverflow } from '@mui/joy';
 import { Image as ImageProps } from 'interfaces/ImageInterfaces';
 
 export const CustomImage: FC<ImageProps> = ({ src, style }) => {
-  const useCardOverflow = style?.padding;
+  const useCardOverflow = style?.margin && Object.values(style.margin).every((margin) => margin === "0px");
   const borderRadius = style?.cornerRadius
   ? `${style?.cornerRadius.topLeft || '0'} ${style.cornerRadius.topRight || '0'} ${style.cornerRadius.bottomRight || '0'} ${style.cornerRadius.bottomLeft || '0'}`
   : undefined;
@@ -23,7 +23,7 @@ export const CustomImage: FC<ImageProps> = ({ src, style }) => {
       )}
     </>
   );
-
+  console.log("usedCardOverflow", useCardOverflow)
   return useCardOverflow ? (
     <CardOverflow>
       <AspectRatio style={{ borderRadius }}>

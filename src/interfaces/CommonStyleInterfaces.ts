@@ -1,10 +1,10 @@
 import { FontWeight, TextLevel } from "utils/types";
 
-export interface PaddingStyle {
-  paddingTop?: string;
-  paddingRight?: string;
-  paddingBottom?: string;
-  paddingLeft?: string;
+export interface marginStyle {
+  marginTop?: string;
+  marginRight?: string;
+  marginBottom?: string;
+  marginLeft?: string;
 }
 
 export interface CornerRadius {
@@ -20,6 +20,7 @@ export interface TextStyle {
   fontWeight?: FontWeight;
   fontSize?: string;
   color?: string;
+  margin?: marginStyle;
 }
 
 export interface ContentStyle {

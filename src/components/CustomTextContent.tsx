@@ -41,11 +41,11 @@ const hLineStyle = {
 const renderLinkItem = (item: LinkItem) => (
   <Link
     href={item.link}
-    level={item.typography?.level}
-    fontFamily={item.typography?.font}
-    fontWeight={item.typography?.fontWeight}
-    fontSize={item.typography?.fontSize}
-    textColor={item.typography?.color}
+    level={item.style?.level}
+    fontFamily={item.style?.font}
+    fontWeight={item.style?.fontWeight}
+    fontSize={item.style?.fontSize}
+    textColor={item.style?.color}
     underline="hover"
     startDecorator={item.icon && <Icon>{item.icon}</Icon>}
   >

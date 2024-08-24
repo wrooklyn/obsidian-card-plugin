@@ -1,14 +1,14 @@
 import {PluginSettingTab, Setting } from 'obsidian';
 import { GlobalSettings } from './interfaces/SettingsInterfaces';
 import CardViewPlugin from 'main';
-import { ContentStyle, CornerRadius, PaddingStyle } from 'interfaces/CommonStyleInterfaces';
+import { ContentStyle, CornerRadius, marginStyle } from 'interfaces/CommonStyleInterfaces';
 import { ImageFit, ImagePosition } from 'utils/types';
 import { capitalizeFirstLetter, configureTypographySection} from 'utils/utils';
 
 // Default settings
 export const DEFAULT_SETTINGS: GlobalSettings = {
   cardStyle: {
-    height: '200px',
+    height: '300px',
     width: '200px',
     backgroundColor: '#F8F8FF',
     cornerRadius: {
@@ -17,16 +17,16 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
       bottomLeft: '8px',
       bottomRight: '8px',
     },
-    resizable: true,
+    resizable: false,
   },
   imageStyle: {
     position: 'center',
     fit: 'cover',
-    padding: {
-      paddingTop: '0px',
-      paddingRight: '0px',
-      paddingBottom: '0px',
-      paddingLeft: '0px',
+    margin: {
+      marginTop: '0px',
+      marginRight: '0px',
+      marginBottom: '0px',
+      marginLeft: '0px',
     },
     cornerRadius: {
       topLeft: '0px',
@@ -42,30 +42,60 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
       fontWeight: 'regular',
       fontSize: '12px',
       color: '#707070',
+      margin: {
+        marginLeft: '16px',
+        marginRight: '16px',
+        marginBottom: '10px', 
+        marginTop: '0px'
+      }
     },
     title: {
       font: 'Encode Sans SC',
       fontWeight: 'bold',
       fontSize: '16px',
       color: '#000000',
+      margin: {
+        marginLeft: '16px',
+        marginRight: '16px',
+        marginBottom: '10px', 
+        marginTop: '0px'
+      }
     },
     subtitle: {
       font: 'Assistant',
       fontWeight: 'regular',
       fontSize: '11px',
       color: '#707070',
+      margin: {
+        marginLeft: '16px',
+        marginRight: '16px',
+        marginBottom: '10px', 
+        marginTop: '0px'
+      }
     },
     body: {
       font: 'Assistant',
       fontWeight: 'regular',
       fontSize: '11px',
       color: '#707070',
+      margin: {
+        marginLeft: '16px',
+        marginRight: '16px',
+        marginBottom: '10px', 
+        marginTop: '0px'
+      }
     },
     links: {
       font: 'Karla',
       fontWeight: 'regular',
       fontSize: '12px',
       color: '#39383A',
+      margin: {
+        marginLeft: '16px',
+        marginRight: '16px',
+        marginBottom: '10px', 
+        marginTop: '0px'
+      }
     },
   },
   horizontalScroll: false, 
@@ -87,14 +117,15 @@ export class CardViewSettingTab extends PluginSettingTab {
 
     containerEl.createEl('h3', { text: 'Card Settings' });
 
+    console.log("DEFAULT, ", DEFAULT_SETTINGS);
     // Card Style Settings
     new Setting(containerEl)
       .setName('Card Height')
       .setDesc('Set the height for the card (e.g., 200px)')
       .addText((text) =>
         text
-          .setPlaceholder('200px')
-          .setValue(this.plugin.settings.cardStyle.height || '200px')
+          .setPlaceholder(DEFAULT_SETTINGS.cardStyle.height!)
+          .setValue(this.plugin.settings.cardStyle.height || DEFAULT_SETTINGS.cardStyle.height!)
           .onChange(async (value) => {
             this.plugin.settings.cardStyle.height = value;
             await this.plugin.saveSettings();
@@ -106,8 +137,8 @@ export class CardViewSettingTab extends PluginSettingTab {
       .setDesc('Set the width for the card (e.g., 200px)')
       .addText((text) =>
         text
-          .setPlaceholder('200px')
-          .setValue(this.plugin.settings.cardStyle.width || '200px')
+          .setPlaceholder(DEFAULT_SETTINGS.cardStyle.width!)
+          .setValue(this.plugin.settings.cardStyle.width || DEFAULT_SETTINGS.cardStyle.width!)
           .onChange(async (value) => {
             this.plugin.settings.cardStyle.width = value;
             await this.plugin.saveSettings();
@@ -119,8 +150,8 @@ export class CardViewSettingTab extends PluginSettingTab {
       .setDesc('Set the background color of the card (e.g., #F8F8FF)')
       .addText((text) =>
         text
-          .setPlaceholder('#F8F8FF')
-          .setValue(this.plugin.settings.cardStyle.backgroundColor || '#F8F8FF')
+          .setPlaceholder(DEFAULT_SETTINGS.cardStyle.backgroundColor!)
+          .setValue(this.plugin.settings.cardStyle.backgroundColor || DEFAULT_SETTINGS.cardStyle.backgroundColor!)
           .onChange(async (value) => {
             this.plugin.settings.cardStyle.backgroundColor = value;
             await this.plugin.saveSettings();
@@ -136,8 +167,8 @@ export class CardViewSettingTab extends PluginSettingTab {
         .setDesc(`Set the card corner radius for ${corner} (e.g., 8px)`)
         .addText((text) =>
           text
-            .setPlaceholder('8px')
-            .setValue(this.plugin.settings.cardStyle.cornerRadius?.[corner] || '8px')
+            .setPlaceholder(DEFAULT_SETTINGS.cardStyle.cornerRadius?.[corner]!)
+            .setValue(this.plugin.settings.cardStyle.cornerRadius?.[corner] || DEFAULT_SETTINGS.cardStyle.cornerRadius?.[corner]!)
             .onChange(async (value) => {
               if (!this.plugin.settings.cardStyle.cornerRadius) {
                 this.plugin.settings.cardStyle.cornerRadius = {} as CornerRadius;
@@ -154,7 +185,7 @@ export class CardViewSettingTab extends PluginSettingTab {
     .setDesc('Allow cards to be resizable.')
     .addToggle((toggle) =>
       toggle
-        .setValue(this.plugin.settings.cardStyle.resizable || false)
+        .setValue(this.plugin.settings.cardStyle.resizable || DEFAULT_SETTINGS.cardStyle.resizable!)
         .onChange(async (value) => {
           this.plugin.settings.cardStyle.resizable = value;
           await this.plugin.saveSettings();
@@ -175,7 +206,7 @@ export class CardViewSettingTab extends PluginSettingTab {
       .setDesc('Toggle to apply a gradient overlay to the image.')
       .addToggle((toggle) =>
         toggle
-          .setValue(this.plugin.settings.imageStyle.gradientOverlay || false)
+          .setValue(this.plugin.settings.imageStyle.gradientOverlay || DEFAULT_SETTINGS.imageStyle.gradientOverlay!)
           .onChange(async (value) => {
             this.plugin.settings.imageStyle.gradientOverlay = value;
             await this.plugin.saveSettings();
@@ -192,7 +223,7 @@ export class CardViewSettingTab extends PluginSettingTab {
         dropdown.addOption('center', 'Center');
         dropdown.addOption('background', 'Background');
         dropdown
-          .setValue(this.plugin.settings.imageStyle.position || 'center')
+          .setValue(this.plugin.settings.imageStyle.position || DEFAULT_SETTINGS.imageStyle.position!)
           .onChange(async (value) => {
             this.plugin.settings.imageStyle.position = value as ImagePosition;
             await this.plugin.saveSettings();
@@ -209,28 +240,28 @@ export class CardViewSettingTab extends PluginSettingTab {
         dropdown.addOption('none', 'None');
         dropdown.addOption('scale-down', 'Scale Down');
         dropdown
-          .setValue(this.plugin.settings.imageStyle.fit || 'cover')
+          .setValue(this.plugin.settings.imageStyle.fit || DEFAULT_SETTINGS.imageStyle.fit!)
           .onChange(async (value) => {
             this.plugin.settings.imageStyle.fit = value as ImageFit;
             await this.plugin.saveSettings();
           });
     });
 
-    // Image Padding
-    const paddingKeys: (keyof PaddingStyle)[] =['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'];
-    paddingKeys.forEach((side) => {
+    // Image margin
+    const marginKeys: (keyof marginStyle)[] =['marginTop', 'marginRight', 'marginBottom', 'marginLeft'];
+    marginKeys.forEach((side) => {
       new Setting(containerEl)
-        .setName(`Image Padding (${side})`)
-        .setDesc(`Set the padding for ${side} (e.g., 0px)`)
+        .setName(`Image margin (${side})`)
+        .setDesc(`Set the margin for ${side} (e.g., 0px)`)
         .addText((text) =>
           text
-            .setPlaceholder('0px')
-            .setValue(this.plugin.settings.imageStyle.padding?.[side] || '0px')
+            .setPlaceholder(DEFAULT_SETTINGS.imageStyle.margin?.[side]!)
+            .setValue(this.plugin.settings.imageStyle.margin?.[side] || DEFAULT_SETTINGS.imageStyle.margin?.[side]!)
             .onChange(async (value) => {
-              if (!this.plugin.settings.imageStyle.padding) {
-                this.plugin.settings.imageStyle.padding = {};
+              if (!this.plugin.settings.imageStyle.margin) {
+                this.plugin.settings.imageStyle.margin = {};
               }
-              this.plugin.settings.imageStyle.padding[side] = value;
+              this.plugin.settings.imageStyle.margin[side] = value;
               await this.plugin.saveSettings();
             })
         );
@@ -242,8 +273,8 @@ export class CardViewSettingTab extends PluginSettingTab {
         .setDesc(`Set the images corner radius for ${corner} (e.g., 8px)`)
         .addText((text) =>
           text 
-            .setPlaceholder('8px')
-            .setValue(this.plugin.settings.imageStyle.cornerRadius?.[corner] || '8px')
+            .setPlaceholder(DEFAULT_SETTINGS.imageStyle.cornerRadius?.[corner]!)
+            .setValue(this.plugin.settings.imageStyle.cornerRadius?.[corner] || DEFAULT_SETTINGS.imageStyle.cornerRadius?.[corner]!)
             .onChange(async (value) => {
               if (!this.plugin.settings.imageStyle.cornerRadius) {
                 this.plugin.settings.imageStyle.cornerRadius = {} as CornerRadius;
@@ -261,7 +292,7 @@ export class CardViewSettingTab extends PluginSettingTab {
       .setDesc('Enable horizontal scrolling for the cards.')
       .addToggle((toggle) =>
         toggle
-          .setValue(this.plugin.settings.horizontalScroll || false)
+          .setValue(this.plugin.settings.horizontalScroll || DEFAULT_SETTINGS.horizontalScroll)
           .onChange(async (value) => {
             this.plugin.settings.horizontalScroll = value;
             await this.plugin.saveSettings();
