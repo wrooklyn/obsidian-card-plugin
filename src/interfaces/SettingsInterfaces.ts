@@ -1,10 +1,10 @@
 import { CardStyle } from "./CardInterfaces";
-import { ContentStyle } from "./CardTemplateInterface";
+import { ContentStyle } from "./CommonStyleInterfaces";
 import { ImageStyle } from "./ImageInterfaces";
 
 export interface GlobalSettings {
   cardStyle: CardStyle;
   imageStyle: ImageStyle;
-  typography: ContentStyle;
+  contentStyle: ContentStyle;
   horizontalScroll: boolean;
 }

@@ -3,9 +3,9 @@ import { AspectRatio, CardCover, CardOverflow } from '@mui/joy';
 import { Image as ImageProps } from 'interfaces/ImageInterfaces';
 
 export const CustomImage: FC<ImageProps> = ({ src, style }) => {
-  const useCardOverflow = !style.padding;
-  const borderRadius = style.cornerRadius
-  ? `${style.cornerRadius.topLeft || '0'} ${style.cornerRadius.topRight || '0'} ${style.cornerRadius.bottomRight || '0'} ${style.cornerRadius.bottomLeft || '0'}`
+  const useCardOverflow = style?.padding;
+  const borderRadius = style?.cornerRadius
+  ? `${style?.cornerRadius.topLeft || '0'} ${style.cornerRadius.topRight || '0'} ${style.cornerRadius.bottomRight || '0'} ${style.cornerRadius.bottomLeft || '0'}`
   : undefined;
 
   const ImageLayers = (
@@ -13,7 +13,7 @@ export const CustomImage: FC<ImageProps> = ({ src, style }) => {
       <CardCover>
         <img src={src} alt="" loading="lazy" />
       </CardCover>
-      {style.gradientOverlay && (
+      {style?.gradientOverlay && (
         <CardCover
           sx={{
             background:

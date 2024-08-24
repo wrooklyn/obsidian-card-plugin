@@ -1,9 +1,8 @@
-import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import {PluginSettingTab, Setting } from 'obsidian';
 import { GlobalSettings } from './interfaces/SettingsInterfaces';
 import CardViewPlugin from 'main';
-import { CornerRadius, PaddingStyle, TextStyle } from 'interfaces/CommonStyleInterfaces';
-import { ContentStyle } from 'interfaces/CardTemplateInterface';
-import { FontWeight, ImageFit, ImagePosition, TextLevel } from 'utils/types';
+import { ContentStyle, CornerRadius, PaddingStyle } from 'interfaces/CommonStyleInterfaces';
+import { ImageFit, ImagePosition } from 'utils/types';
 import { capitalizeFirstLetter, configureTypographySection} from 'utils/utils';
 
 // Default settings
@@ -37,7 +36,7 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
     },
     gradientOverlay: false,
   },
-  typography: {
+  contentStyle: {
     heading: {
       font: 'Karla',
       fontWeight: 'regular',
@@ -237,6 +236,23 @@ export class CardViewSettingTab extends PluginSettingTab {
         );
     });
 
+    cornerKeys.forEach((corner) => {
+      new Setting(containerEl)
+        .setName(`Corner Radius (${corner})`)
+        .setDesc(`Set the images corner radius for ${corner} (e.g., 8px)`)
+        .addText((text) =>
+          text 
+            .setPlaceholder('8px')
+            .setValue(this.plugin.settings.imageStyle.cornerRadius?.[corner] || '8px')
+            .onChange(async (value) => {
+              if (!this.plugin.settings.imageStyle.cornerRadius) {
+                this.plugin.settings.imageStyle.cornerRadius = {} as CornerRadius;
+              }
+              this.plugin.settings.imageStyle.cornerRadius[corner] = value;
+              await this.plugin.saveSettings();
+            })
+        );
+    });
     containerEl.createEl('h3', { text: 'General Settings' });
 
     // Horizontal Scroll Toggle

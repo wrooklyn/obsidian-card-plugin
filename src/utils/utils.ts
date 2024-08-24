@@ -1,6 +1,5 @@
-import { PaddingStyle, TextStyle } from "interfaces/CommonStyleInterfaces";
+import { ContentStyle, PaddingStyle, TextStyle } from "interfaces/CommonStyleInterfaces";
 import { App, MarkdownPostProcessorContext, MarkdownRenderChild, MarkdownView, TFile } from 'obsidian';
-import { iconMap } from "./IconMap";
 import { FontWeight, IconCategory, IconPosition, TextLevel } from "./types";
 import { Setting } from "obsidian";
 import { GlobalSettings } from "interfaces/SettingsInterfaces";
@@ -13,6 +12,7 @@ import { DEFAULT_SETTINGS } from "settings";
 import { TextSection, LinkItem, Card, Metadata, ActionIcon, CardStyle, CardTextContent } from "interfaces/CardInterfaces";
 import { CardTemplate } from "interfaces/CardTemplateInterface";
 import { ImageStyle, Image } from "interfaces/ImageInterfaces";
+import { iconMap } from "./IconMap";
 
 /**
  * ------------- SETTINGS HANDLING -------------
@@ -76,11 +76,11 @@ export const createTextInputSetting = (
 export const configureTypographySection = (
   containerEl: HTMLElement,
   sectionLabel: string,
-  section: keyof GlobalSettings["typography"],
+  section: keyof GlobalSettings["contentStyle"],
   pluginSettings: GlobalSettings,
   plugin: CardViewPlugin
 ) => {
-  const sectionSettings = pluginSettings.typography[section] || ({} as TextStyle);
+  const sectionSettings = pluginSettings.contentStyle[section] || ({} as TextStyle);
 
   createDropdownSetting(
     containerEl,
@@ -90,7 +90,7 @@ export const configureTypographySection = (
     { light: 'Light', regular: 'Regular', medium: 'Medium', bold: 'Bold' },
     async (value: string) => {
       sectionSettings.fontWeight = value as FontWeight;
-      pluginSettings.typography[section] = sectionSettings;
+      pluginSettings.contentStyle[section] = sectionSettings;
       await plugin.saveSettings();
     }
   );
@@ -115,7 +115,7 @@ export const configureTypographySection = (
     },
     async (value: string) => {
       sectionSettings.level = value as TextLevel;
-      pluginSettings.typography[section] = sectionSettings;
+      pluginSettings.contentStyle[section] = sectionSettings;
       await plugin.saveSettings();
     }
   );
@@ -127,7 +127,7 @@ export const configureTypographySection = (
     sectionSettings.font || 'Karla',
     async (value: string) => {
       sectionSettings.font = value;
-      pluginSettings.typography[section] = sectionSettings;
+      pluginSettings.contentStyle[section] = sectionSettings;
       await plugin.saveSettings();
     }
   );
@@ -139,7 +139,7 @@ export const configureTypographySection = (
     sectionSettings.fontSize || '12px',
     async (value: string) => {
       sectionSettings.fontSize = value;
-      pluginSettings.typography[section] = sectionSettings;
+      pluginSettings.contentStyle[section] = sectionSettings;
       await plugin.saveSettings();
     }
   );
@@ -151,114 +151,96 @@ export const configureTypographySection = (
     sectionSettings.color || '#707070',
     async (value: string) => {
       sectionSettings.color = value;
-      pluginSettings.typography[section] = sectionSettings;
+      pluginSettings.contentStyle[section] = sectionSettings;
       await plugin.saveSettings();
     }
   );
 };
 
 /**
- * Merges and applies card settings in the following order of precedence:
- * 1. Default settings
- * 2. Global plugin settings
- * 3. Template-specific settings
- * 4. Code block-specific settings
- * @param defaultSettings - The default settings.
- * @param globalSettings - The global plugin settings.
- * @param templateSettings - The template-specific settings.
- * @param codeBlockSettings - The code block-specific settings.
- * @returns The final merged settings.
+ * Merges multiple settings objects. Priority is given from right to left.
+ * Card-specific settings > Template-specific settings > Global settings > Default settings.
+ * @param settingsList - An array of settings objects to merge.
+ * @returns The merged settings object.
  */
-const applyCardSettings = (
-  defaultSettings: any,
-  globalSettings: any,
-  templateSettings: any,
-  codeBlockSettings: any
-): any => {
-  return {
-    ...defaultSettings,
-    ...globalSettings,
-    ...templateSettings,
-    ...codeBlockSettings,
-  };
+function mergeSettings(...settingsList: any[]): any {
+  return settingsList.reduce((acc, settings) => {
+    if (!settings) return acc;
+
+    for (const key in settings) {
+      if (settings.hasOwnProperty(key)) {
+        const value = settings[key];
+
+        if (value !== null && value !== undefined) {
+          acc[key] = value;
+        }
+      }
+    }
+    return acc;
+  }, {});
+}
+
+
+
+export const getIconByCategory = (category: IconCategory): JSX.Element | null => {
+  return iconMap[category] || null;
+};
+
+export const iconPositionMap: Record<IconPosition, (padding?: PaddingStyle) => object> = {
+  'top-left': (padding) => ({ top: padding?.paddingTop ?? '0', left: padding?.paddingLeft ?? '0' }),
+  'top-right': (padding) => ({ top: padding?.paddingTop ?? '0', right: padding?.paddingRight ?? '0' }),
+  'bottom-left': (padding) => ({ bottom: padding?.paddingBottom ?? '0', left: padding?.paddingLeft ?? '0' }),
+  'bottom-right': (padding) => ({ bottom: padding?.paddingBottom ?? '0', right: padding?.paddingRight ?? '0' }),
+  'top-center': (padding) => ({ top: padding?.paddingTop ?? '0', left: '50%', transform: 'translateX(-50%)' }),
+  'bottom-center': (padding) => ({ bottom: padding?.paddingBottom ?? '0', left: '50%', transform: 'translateX(-50%)' }),
 };
 
 /**
  * ------------- CARD CONTENT RESOLUTION -------------
  */
 
-/**
- * Resolves the card style settings (e.g., height, width, background color).
- * @param style - The style object for the card.
- * @returns The resolved CardStyle object.
- */
-const resolveCardStyle = (style: CardStyle): CardStyle => {
-  return {
-    height: style.height || '200px',
-    width: style.width || '300px',
-    backgroundColor: style.backgroundColor || '#FFFFFF',
-    cornerRadius: style.cornerRadius,
-    resizable: style.resizable ?? true,
-  };
+
+const resolveCardStyle = (cardStyle: CardStyle = {}, settingsTabCardStyle: CardStyle={}, templateCardStyle: CardStyle={}): CardStyle => {
+  return mergeSettings(DEFAULT_SETTINGS.cardStyle, settingsTabCardStyle, templateCardStyle, cardStyle);
 };
 
-/**
- * Resolves the image settings for a card, including the image path and styles.
- * @param image - The image object containing the source and style.
- * @param resolvePath - A function to resolve the image path.
- * @returns The resolved Image object.
- */
-const resolveImage = (image: Image, resolvePath: (src: string) => string): Image => {
+
+const resolveImage = (image: Image, resolvePath: (src: string) => string, settingsTabImageStyle?: ImageStyle, templateImageStyle?: ImageStyle): Image => {
+  const mergedImageStyle = mergeSettings(DEFAULT_SETTINGS.imageStyle, settingsTabImageStyle, templateImageStyle, image.style);
+
   return {
-    ...image,
     src: resolvePath(image.src),
-    style: image.style ? resolveImageStyle(image.style) : undefined,
+    style: mergedImageStyle,
   };
 };
 
-/**
- * Resolves the styles for an image within a card (e.g., position, fit, padding).
- * @param style - The ImageStyle object containing style information.
- * @returns The resolved ImageStyle object.
- */
-const resolveImageStyle = (style: ImageStyle): ImageStyle => {
-  return {
-    position: style.position || 'center',
-    fit: style.fit || 'cover',
-    padding: style.padding,
-    cornerRadius: style.cornerRadius,
-    gradientOverlay: style.gradientOverlay ?? false,
-  };
-};
 
-/**
- * Resolves the content settings within a card, such as text sections, lists, and links.
- * @param app - The current Obsidian app instance.
- * @param content - The content object containing text and layout information.
- * @returns The resolved CardTextContent object.
- */
-const resolveCardContent = (app: App, content: CardTextContent): CardTextContent => {
+
+const resolveCardContent = (app: App, content: CardTextContent, settingsTab: ContentStyle={}, templateSettings: ContentStyle={}): CardTextContent => {
   return {
     link: content.link,
-    heading: content.heading ? resolveTextSection(content.heading) : undefined,
-    title: content.title ? resolveTextSection(content.title) : undefined,
-    subtitle: content.subtitle ? resolveTextSection(content.subtitle) : undefined,
-    body: content.body ? resolveTextSection(content.body) : undefined,
-    list: content.list ? content.list.map((item) => resolveLinkItem(app, item)) : undefined,
-    position: content.position,
-    expandable: content.expandable ?? false,
+    heading: content.heading ? resolveTextSection(content.heading, settingsTab.heading, templateSettings.heading) : undefined,
+    title: content.title ? resolveTextSection(content.title, settingsTab.title, templateSettings.title) : undefined,
+    subtitle: content.subtitle ? resolveTextSection(content.subtitle, settingsTab.subtitle, templateSettings.subtitle) : undefined,
+    body: content.body ? resolveTextSection(content.body, settingsTab.body, templateSettings.body) : undefined,
+    list: content.list ? content.list.map((linkItem) => resolveLinkItem(app, linkItem, settingsTab.links, templateSettings.links)) : undefined,
+    position: content?.position,
+    expandable: content.expandable ?? false, //CHECK LATER
   };
 };
 
-/**
- * Resolves a text section within a card, including its typography settings.
- * @param section - The TextSection object containing the text and typography settings.
- * @returns The resolved TextSection object.
- */
-const resolveTextSection = (section: TextSection): TextSection => {
+
+const resolveTextSection = (section: TextSection, settingsTabTypography?: TextStyle, templateTypography?: TextStyle): TextSection => {
+  const mergedTypography = mergeSettings(
+    DEFAULT_SETTINGS.contentStyle.heading,
+    settingsTabTypography,         
+    templateTypography,       
+    section.typography        
+  );
+
   return {
     text: section.text,
-    typography: section.typography,
+    typography: mergedTypography,
   };
 };
 
@@ -268,10 +250,17 @@ const resolveTextSection = (section: TextSection): TextSection => {
  * @param item - The LinkItem object containing the link and its associated text.
  * @returns The resolved LinkItem object with the correct URI.
  */
-const resolveLinkItem = (app: App, item: LinkItem): LinkItem => {
+const resolveLinkItem = (app: App, linkItem: LinkItem, settingsTabLinks: TextStyle | undefined, templateLinks: TextStyle | undefined): LinkItem => {
+  const mergedTypography = mergeSettings(
+    DEFAULT_SETTINGS.contentStyle.links,
+    settingsTabLinks,         
+    templateLinks,       
+    linkItem.typography        
+  );
   return {
-    ...item,
-    link: generateObsidianURI(app, item.link),
+    ...linkItem,
+    link: generateObsidianURI(app, linkItem.link),
+    typography: mergedTypography
   };
 };
 
@@ -310,13 +299,13 @@ const resolveMetadata = (metadata: Metadata): Metadata => {
  * @param codeBlock - The parsed CardViewConfig object containing the card definitions.
  * @returns An array of resolved Card objects.
  */
-const processCardBlock = (app: App, codeBlock: CardViewConfig): Card[] => {
+const processCardBlock = (app: App, codeBlock: CardViewConfig, templateSettings: CardTemplate, settingsTab: GlobalSettings): Card[] => {
   const resolvePath = resolveVaultPath(app);
 
   return codeBlock.cards.map((card) => ({
-    style: card.style ? resolveCardStyle(card.style) : undefined,
-    image: card.image ? resolveImage(card.image, resolvePath) : undefined,
-    content: card.content ? resolveCardContent(app, card.content) : undefined,
+    style: resolveCardStyle(card.style, settingsTab?.cardStyle,  templateSettings?.cardStyle),
+    image: card.image? resolveImage(card.image, resolvePath, settingsTab?.imageStyle, templateSettings?.imageStyle) : undefined,
+    content: card.content? resolveCardContent(app, card.content, settingsTab.contentStyle, templateSettings?.contentStyle) : undefined,
     actionIcon: card.actionIcon ? resolveActionIcon(card.actionIcon) : undefined,
     metadata: card.metadata ? resolveMetadata(card.metadata) : undefined,
   }));
@@ -332,14 +321,14 @@ const processCardBlock = (app: App, codeBlock: CardViewConfig): Card[] => {
  * @param el - The HTML element where the rendered content will be inserted.
  * @param ctx - The Markdown post-processor context.
  * @param app - The current Obsidian app instance.
- * @param pluginSettings - The global plugin settings object.
+ * @param settingsTab - The global plugin settings object.
  */
 export async function processCodeBlock(
   source: string,
   el: HTMLElement,
   ctx: MarkdownPostProcessorContext,
   app: App,
-  pluginSettings: GlobalSettings
+  settingsTab: GlobalSettings
 ) {
   try {
     const codeBlock: CardViewConfig = parseCodeBlock(source);
@@ -354,16 +343,14 @@ export async function processCodeBlock(
       templateSettings = codeBlock.template;
     }
 
-    let cards: Card[] = processCardBlock(app, codeBlock);
-
-    const finalSettings = applyCardSettings(DEFAULT_SETTINGS, pluginSettings, templateSettings, codeBlock);
+    let cards: Card[] = processCardBlock(app, codeBlock, templateSettings, settingsTab);
 
     const root = ReactDOM.createRoot(el);
     root.render(
       createElement(
         'div',
         { style: { display: 'flex', flexWrap: 'wrap', gap: '16px' } },
-        cards.map((card, index) => createElement(CustomCard, { ...card, key: index, style: card.style }))
+        cards.map((card, index) => createElement(CustomCard, { ...card, key: index}))
       )
     );
 

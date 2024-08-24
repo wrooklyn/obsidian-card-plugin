@@ -21,3 +21,11 @@ export interface TextStyle {
   fontSize?: string;
   color?: string;
 }
+
+export interface ContentStyle {
+  heading?: TextStyle;
+  title?: TextStyle;
+  subtitle?: TextStyle;
+  body?: TextStyle;
+  links?: TextStyle;
+}

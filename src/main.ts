@@ -10,7 +10,7 @@ export default class CardViewPlugin extends Plugin {
     await this.loadSettings();
     this.addSettingTab(new CardViewSettingTab(this));
     this.registerMarkdownCodeBlockProcessor('cardview', (source, el, ctx) => {
-      processCodeBlock(source, el, ctx, this.app, this.settings); // Pass relevant parameters to the utility function
+      processCodeBlock(source, el, ctx, this.app, this.settings); 
     });
 
     // Listen for note changes
