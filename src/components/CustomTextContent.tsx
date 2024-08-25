@@ -5,6 +5,7 @@ import { CustomTypography } from './CustomTypography';
 import { styled } from '@mui/system';
 import Icon from '@mui/material/Icon';
 import { ContentPosition } from 'utils/types';
+import { adjustPixelValue } from 'utils/utils';
 
 const ContentWrapper = styled(CardContent)<{ position?: ContentPosition, }>(({ position }) => {
   let alignmentStyles = {};
@@ -72,7 +73,7 @@ export const CustomTextContent: FC<CardTextContent> = ({
   const expandableIcon = useMemo(() => {
     if (!expandable) return null;
     return (
-      <Icon style={{ marginRight: '8px' }}>
+      <Icon style={{ marginLeft: adjustPixelValue(subtitle?.style?.margin?.marginLeft,8) }} className="material-icons-round">
         {expanded ? 'expand_more' : 'chevron_right'}
       </Icon>
     );

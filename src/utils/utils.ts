@@ -469,3 +469,10 @@ export const capitalizeFirstLetter = (text: string): string => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
+export const adjustPixelValue = (pixelString: string | undefined, adjustment: number): string | undefined => {
+  if (!pixelString) return undefined;
+
+  const numericValue = parseInt(pixelString, 10);
+  const adjustedValue = numericValue - adjustment;
+  return `${adjustedValue}px`;
+}

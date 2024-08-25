@@ -42,7 +42,7 @@ export default class CardViewPlugin extends Plugin {
   loadMaterialIconsFont() {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
+    link.href = 'https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Round';
     document.head.appendChild(link);
   }
   loadGoogleFonts() {
