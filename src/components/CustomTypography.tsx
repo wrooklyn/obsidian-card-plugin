@@ -1,17 +1,27 @@
 import Typography from '@mui/joy/Typography';
 import { TextSection } from "../interfaces/CardInterfaces";
+import { styled } from '@mui/joy';
 
 
+const StyledTypography = styled(Typography)<{textStyle: TextSection['style']}>(({textStyle})=>
+    (
+        {
+            fontFamily: textStyle?.font,
+            fontWeight: textStyle?.fontWeight,
+            fontSize: textStyle?.fontSize,
+            color: textStyle?.color,
+            margin: `${textStyle?.margin?.marginTop} ${textStyle?.margin?.marginRight} ${textStyle?.margin?.marginBottom} ${textStyle?.margin?.marginLeft} !important`,
+
+        }
+    )
+);
 export const CustomTypography = ({text, style}: TextSection)=>{
     return (
-        <Typography
+        <StyledTypography
             level={style?.level}
-            fontFamily={style?.font}
-            fontWeight={style?.fontWeight}
-            fontSize={style?.fontSize}
-            textColor={style?.color}
+            textStyle={style}
         >
             {text}
-        </Typography>
+        </StyledTypography>
     ) 
 }

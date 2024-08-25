@@ -7,8 +7,6 @@ import { CustomIconButton } from './CustomIconButton';
 import { styled } from '@mui/system';
 import { ImageStyle } from 'interfaces/ImageInterfaces';
 
-
-// Styled component to handle dynamic card styling
 const StyledCard = styled(JoyCard)<{ cardStyle?: CardStyle, imageStyle?: ImageStyle}>(({ cardStyle, imageStyle }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -19,6 +17,7 @@ const StyledCard = styled(JoyCard)<{ cardStyle?: CardStyle, imageStyle?: ImageSt
   height: cardStyle?.resizable ? 'auto' : cardStyle?.height, 
   minWidth: cardStyle?.width, 
   minHeight: cardStyle?.height, 
+  //consider adding maxWidth and maxHeight 
   backgroundColor: cardStyle?.backgroundColor,
   borderTopLeftRadius: cardStyle?.cornerRadius?.topLeft,
   borderTopRightRadius: cardStyle?.cornerRadius?.topRight,

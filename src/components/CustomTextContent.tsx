@@ -6,7 +6,7 @@ import { styled } from '@mui/system';
 import Icon from '@mui/material/Icon';
 import { ContentPosition } from 'utils/types';
 
-const ContentWrapper = styled(CardContent)<{ position?: ContentPosition }>(({ position }) => {
+const ContentWrapper = styled(CardContent)<{ position?: ContentPosition, }>(({ position }) => {
   let alignmentStyles = {};
   switch (position) {
     case 'top':

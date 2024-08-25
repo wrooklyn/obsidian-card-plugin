@@ -38,6 +38,7 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
   },
   contentStyle: {
     heading: {
+      level: 'body-md',
       font: 'Karla',
       fontWeight: 'regular',
       fontSize: '12px',
@@ -45,11 +46,12 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
       margin: {
         marginLeft: '16px',
         marginRight: '16px',
-        marginBottom: '10px', 
+        marginBottom: '0px', 
         marginTop: '0px'
       }
     },
     title: {
+      level: 'title-lg',
       font: 'Encode Sans SC',
       fontWeight: 'bold',
       fontSize: '16px',
@@ -57,11 +59,12 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
       margin: {
         marginLeft: '16px',
         marginRight: '16px',
-        marginBottom: '10px', 
+        marginBottom: '0px', 
         marginTop: '0px'
       }
     },
     subtitle: {
+      level: 'body-md',
       font: 'Assistant',
       fontWeight: 'regular',
       fontSize: '11px',
@@ -69,23 +72,25 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
       margin: {
         marginLeft: '16px',
         marginRight: '16px',
-        marginBottom: '10px', 
+        marginBottom: '0px', 
         marginTop: '0px'
       }
     },
     body: {
-      font: 'Assistant',
+      level: 'body-md',
+      font: 'Karla',
       fontWeight: 'regular',
       fontSize: '11px',
       color: '#707070',
       margin: {
         marginLeft: '16px',
         marginRight: '16px',
-        marginBottom: '10px', 
+        marginBottom: '0px', 
         marginTop: '0px'
       }
     },
     links: {
+      level: 'body-md',
       font: 'Karla',
       fontWeight: 'regular',
       fontSize: '12px',
@@ -93,7 +98,7 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
       margin: {
         marginLeft: '16px',
         marginRight: '16px',
-        marginBottom: '10px', 
+        marginBottom: '0px', 
         marginTop: '0px'
       }
     },
