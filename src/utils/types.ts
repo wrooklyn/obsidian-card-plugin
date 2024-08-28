@@ -8,7 +8,7 @@ export type FontWeight = 'light' | 'regular' | 'medium' | 'bold';
 
 export type IconPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center';
 
-export type ImagePosition = 'top' | 'left' | 'right' | 'center' | 'background';
+export type ImagePosition = 'top' | 'bottom'|'left' | 'right'|'background';
 
 export type ImageFit = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
 

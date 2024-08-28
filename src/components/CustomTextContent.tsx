@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { CardTextContent, LinkItem } from '../interfaces/CardInterfaces';
 import { CardContent, Link } from '@mui/joy';
 import { CustomTypography } from './CustomTypography';
@@ -7,7 +7,7 @@ import Icon from '@mui/material/Icon';
 import { ContentPosition } from 'utils/types';
 import { adjustPixelValue } from 'utils/utils';
 
-const ContentWrapper = styled(CardContent)<{ position?: ContentPosition, }>(({ position }) => {
+const ContentWrapper = styled(CardContent)<{ position?: ContentPosition }>(({ position }) => {
   let alignmentStyles = {};
   switch (position) {
     case 'top':
@@ -64,6 +64,17 @@ export const CustomTextContent: FC<CardTextContent> = ({
   position,
 }) => {
   const [expanded, setExpanded] = useState(false);
+  const [contentHeight, setContentHeight] = useState<number | undefined>(undefined);
+
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (bodyRef.current) {
+      const calculatedHeight = expanded ? bodyRef.current.scrollHeight : 0;
+      setContentHeight(calculatedHeight);
+    }
+  }, [expanded, body]);
+
   const handleToggleExpand = () => {
     if (expandable) {
       setExpanded((prev) => !prev);
@@ -73,7 +84,7 @@ export const CustomTextContent: FC<CardTextContent> = ({
   const expandableIcon = useMemo(() => {
     if (!expandable) return null;
     return (
-      <Icon style={{ marginLeft: adjustPixelValue(subtitle?.style?.margin?.marginLeft,8) }} className="material-icons-round">
+      <Icon style={{ marginLeft: adjustPixelValue(subtitle?.style?.margin?.marginLeft, -40) }} className="material-icons-round">
         {expanded ? 'expand_more' : 'chevron_right'}
       </Icon>
     );
@@ -92,17 +103,22 @@ export const CustomTextContent: FC<CardTextContent> = ({
         </div>
       )}
       {subtitle && <CustomTypography {...subtitle} />}
-      {(!expandable || expanded) && (
-        <>
-          {body && <CustomTypography {...body} />}
-          {list.map((item, index) => (
-            <div key={index} style={{ marginBottom: '8px' }}>
-              {renderLinkItem(item)}
-              {index < list.length - 1 && <hr style={hLineStyle} />}
-            </div>
-          ))}
-        </>
-      )}
+      <div
+        ref={bodyRef}
+        style={{
+          maxHeight: expanded ? 'none' : `${contentHeight}px`,
+          overflow: 'hidden',
+          transition: 'max-height 0.3s ease',
+        }}
+      >
+        {body && <CustomTypography {...body} />}
+        {list.map((item, index) => (
+          <div key={index} style={{ marginBottom: '8px' }}>
+            {renderLinkItem(item)}
+            {index < list.length - 1 && <hr style={hLineStyle} />}
+          </div>
+        ))}
+      </div>
     </ContentWrapper>
   );
 };

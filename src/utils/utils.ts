@@ -1,6 +1,6 @@
 import { ContentStyle, marginStyle, TextStyle } from "interfaces/CommonStyleInterfaces";
 import { App, MarkdownPostProcessorContext, MarkdownRenderChild, MarkdownView, TFile } from 'obsidian';
-import { FontWeight, IconCategory, IconPosition, TextLevel } from "./types";
+import { ContentPosition, FontWeight, IconCategory, IconPosition, TextLevel } from "./types";
 import { Setting } from "obsidian";
 import { GlobalSettings } from "interfaces/SettingsInterfaces";
 import CardViewPlugin from "main";
@@ -73,13 +73,15 @@ export const createTextInputSetting = (
  * @param pluginSettings - The global plugin settings object.
  * @param plugin - The instance of the CardViewPlugin.
  */
+
 export const configureTypographySection = (
   containerEl: HTMLElement,
   sectionLabel: string,
-  section: keyof GlobalSettings["contentStyle"],
+  section: keyof Omit<ContentStyle, 'position'>,
   pluginSettings: GlobalSettings,
   plugin: CardViewPlugin
 ) => {
+
   const sectionSettings = pluginSettings.contentStyle[section] || ({} as TextStyle);
 
   createDropdownSetting(
@@ -177,8 +179,31 @@ export const configureTypographySection = (
       }
     );
   });
-
 };
+
+export const configureContentPosition = (
+  containerEl: HTMLElement,
+  pluginSettings: GlobalSettings,
+  plugin: CardViewPlugin
+) => {
+  createDropdownSetting(
+    containerEl,
+    `Content Position`,
+    `Set the position for the content block`,
+    pluginSettings.contentStyle.position || 'top',
+    {
+      'top': 'Top',
+      'bottom': 'Bottom',
+      'left': 'Left',
+      'right': 'Right',
+    },
+    async (value: string) => {
+      pluginSettings.contentStyle.position = value as ContentPosition;
+      await plugin.saveSettings();
+    }
+  );
+};
+
 
 /**
  * Merges multiple settings objects. Priority is given from right to left.
@@ -246,8 +271,8 @@ const resolveCardContent = (app: App, content: CardTextContent, settingsTab: Con
     subtitle: content.subtitle ? resolveTextSection(content.subtitle, settingsTab.subtitle, templateSettings.subtitle) : undefined,
     body: content.body ? resolveTextSection(content.body, settingsTab.body, templateSettings.body) : undefined,
     list: content.list ? content.list.map((linkItem) => resolveLinkItem(app, linkItem, settingsTab.links, templateSettings.links)) : undefined,
-    position: content?.position,
-    expandable: content.expandable ?? false, //CHECK LATER
+    position: content?.position? content.position : (settingsTab.position? settingsTab.position : DEFAULT_SETTINGS.contentStyle.position),
+    expandable: content.expandable ?? false, 
   };
 };
 
@@ -469,10 +494,12 @@ export const capitalizeFirstLetter = (text: string): string => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
-export const adjustPixelValue = (pixelString: string | undefined, adjustment: number): string | undefined => {
+export const adjustPixelValue = (pixelString: string | undefined, adjustmentPercentage: number): string | undefined => {
   if (!pixelString) return undefined;
 
   const numericValue = parseInt(pixelString, 10);
-  const adjustedValue = numericValue - adjustment;
+  const adjustmentAmount = (numericValue * adjustmentPercentage) / 100;
+  const adjustedValue = numericValue + adjustmentAmount;
   return `${adjustedValue}px`;
 }
+

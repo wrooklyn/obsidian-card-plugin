@@ -1,4 +1,4 @@
-import { FontWeight, TextLevel } from "utils/types";
+import { ContentPosition, FontWeight, TextLevel } from "utils/types";
 
 export interface marginStyle {
   marginTop?: string;
@@ -29,4 +29,5 @@ export interface ContentStyle {
   subtitle?: TextStyle;
   body?: TextStyle;
   links?: TextStyle;
+  position?: ContentPosition;
 }

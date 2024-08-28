@@ -3,7 +3,7 @@ import { GlobalSettings } from './interfaces/SettingsInterfaces';
 import CardViewPlugin from 'main';
 import { ContentStyle, CornerRadius, marginStyle } from 'interfaces/CommonStyleInterfaces';
 import { ImageFit, ImagePosition } from 'utils/types';
-import { capitalizeFirstLetter, configureTypographySection} from 'utils/utils';
+import { capitalizeFirstLetter, configureContentPosition, configureTypographySection} from 'utils/utils';
 
 // Default settings
 export const DEFAULT_SETTINGS: GlobalSettings = {
@@ -20,7 +20,7 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
     resizable: false,
   },
   imageStyle: {
-    position: 'center',
+    position: 'top',
     fit: 'cover',
     margin: {
       marginTop: '0px',
@@ -102,6 +102,7 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
         marginTop: '0px'
       }
     },
+    position: 'bottom', 
   },
   horizontalScroll: false, 
 };
@@ -200,9 +201,11 @@ export class CardViewSettingTab extends PluginSettingTab {
     containerEl.createEl('h3', { text: 'Typography Settings' });
 
    // Typography Settings
-   ['heading', 'title', 'subtitle', 'body', 'links'].forEach((section) => {
-        configureTypographySection(containerEl, capitalizeFirstLetter(section), section as keyof ContentStyle, this.plugin.settings, this.plugin);
+   ['heading', 'title', 'subtitle', 'body', 'links', 'position'].forEach((section) => {
+        configureTypographySection(containerEl, capitalizeFirstLetter(section), section as keyof Omit<ContentStyle, 'position'>, this.plugin.settings, this.plugin);
     });
+
+    configureContentPosition(containerEl, this.plugin.settings, this.plugin);
    
     containerEl.createEl('h3', { text: 'Image Style Settings' });
 
