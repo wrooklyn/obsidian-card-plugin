@@ -379,7 +379,6 @@ export async function processCodeBlock(
         'div',
         { style: { display: 'flex', flexWrap: 'wrap', gap: '16px' } },
         cards.map((card, index) => {
-          console.log("hello, ", card);
           return createElement(CustomCard, { ...card, key: index})
         })
       )

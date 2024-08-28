@@ -10,6 +10,7 @@ const StyledIconButton = styled(IconButton, {
     position: 'absolute',
     ...iconPositionMap[position]?.(margin),
   }));
+  
 
 export const CustomIconButton: FC<ActionIcon> = ({
     category,

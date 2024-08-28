@@ -2,36 +2,9 @@ import { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { CardTextContent, LinkItem } from '../interfaces/CardInterfaces';
 import { CardContent, Link } from '@mui/joy';
 import { CustomTypography } from './CustomTypography';
-import { styled } from '@mui/system';
 import Icon from '@mui/material/Icon';
-import { ContentPosition } from 'utils/types';
 import { adjustPixelValue } from 'utils/utils';
 
-const ContentWrapper = styled(CardContent)<{ position?: ContentPosition }>(({ position }) => {
-  let alignmentStyles = {};
-  switch (position) {
-    case 'top':
-      alignmentStyles = { alignSelf: 'flex-start' };
-      break;
-    case 'bottom':
-      alignmentStyles = { alignSelf: 'flex-end' };
-      break;
-    case 'left':
-      alignmentStyles = { alignSelf: 'flex-start', textAlign: 'left', width: '100%' };
-      break;
-    case 'right':
-      alignmentStyles = { alignSelf: 'flex-end', textAlign: 'right', width: '100%' };
-      break;
-    default:
-      alignmentStyles = { alignSelf: 'stretch' }; 
-  }
-
-  return {
-    display: 'flex',
-    flexDirection: 'column',
-    ...alignmentStyles,
-  };
-});
 
 const hLineStyle = {
   border: 'none',
@@ -61,7 +34,6 @@ export const CustomTextContent: FC<CardTextContent> = ({
   body,
   list = [],
   expandable = false,
-  position,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [contentHeight, setContentHeight] = useState<number | undefined>(undefined);
@@ -84,14 +56,18 @@ export const CustomTextContent: FC<CardTextContent> = ({
   const expandableIcon = useMemo(() => {
     if (!expandable) return null;
     return (
-      <Icon style={{ marginLeft: adjustPixelValue(subtitle?.style?.margin?.marginLeft, -40) }} className="material-icons-round">
+      <Icon style={{ 
+          marginLeft: adjustPixelValue(title?.style?.margin?.marginLeft, -40), 
+          marginTop: title?.style?.margin?.marginTop, marginBottom: title?.style?.margin?.marginBottom,
+        }} 
+          className="material-icons-round">
         {expanded ? 'expand_more' : 'chevron_right'}
       </Icon>
     );
   }, [expandable, expanded]);
 
   return (
-    <ContentWrapper position={position}>
+    <CardContent>
       {heading && <CustomTypography {...heading} />}
       {title && (
         <div
@@ -119,6 +95,6 @@ export const CustomTextContent: FC<CardTextContent> = ({
           </div>
         ))}
       </div>
-    </ContentWrapper>
+    </CardContent>
   );
 };

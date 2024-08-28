@@ -123,7 +123,6 @@ export class CardViewSettingTab extends PluginSettingTab {
 
     containerEl.createEl('h3', { text: 'Card Settings' });
 
-    console.log("DEFAULT, ", DEFAULT_SETTINGS);
     // Card Style Settings
     new Setting(containerEl)
       .setName('Card Height')
