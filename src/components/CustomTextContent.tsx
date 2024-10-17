@@ -35,7 +35,7 @@ export const CustomTextContent: FC<CardTextContent> = ({
   list = [],
   expandable = false,
 }) => {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(!expandable);
   const [contentHeight, setContentHeight] = useState<number | undefined>(undefined);
 
   const bodyRef = useRef<HTMLDivElement>(null);
